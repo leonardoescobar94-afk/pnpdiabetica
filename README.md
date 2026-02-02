@@ -1,20 +1,51 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Polineuropathy-Assistant Electrodiagnóstico PMR
 
-# Run and deploy your AI Studio app
+**Herramienta Profesional para Especialistas en Medicina Física y Rehabilitación.**
 
-This contains everything you need to run your app locally.
+Esta aplicación es una herramienta avanzada diseñada para asistir en el análisis de estudios de neuroconducción, facilitando la comparación con valores de referencia y la clasificación de la severidad de la neuropatía diabética sensitivo-motora según la escala de Davies et al.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1DaA3FOCf-Q-Bm51DagM5kdx89ua7LZ32
+## Características Principales
 
-## Run Locally
+*   **Análisis Automático:** Cálculo de Score #2 (Diagnóstico) y Score #4 (Severidad) basado en percentiles normalizados.
+*   **Ajuste Dinámico:** Valores de referencia ajustados automáticamente por edad y altura del paciente.
+*   **Asistente con IA:** Integración con Google Gemini para generar resúmenes clínicos y sugerencias de seguimiento basadas en los hallazgos.
+*   **Generación de Informes:** Exportación de resultados en formatos PDF profesional y TXT para historias clínicas.
+*   **Referencias Académicas:** Basado en estudios de Dyck, Buschbacher y Davies (Rochester Diabetic Neuropathy Study).
 
-**Prerequisites:**  Node.js
+## Requisitos Previos
 
+*   Node.js (versión 18 o superior)
+*   NPM
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Instalación y Ejecución Local
+
+1.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
+
+2.  **Configurar Variables de Entorno:**
+    Crea un archivo `.env` o `.env.local` en la raíz del proyecto y añade tu clave de API de Google Gemini. La aplicación soporta ambas nomenclaturas:
+    ```env
+    API_KEY=tu_clave_de_api_aqui
+    # O alternativamente:
+    GEMINI_API_KEY=tu_clave_de_api_aqui
+    ```
+
+3.  **Ejecutar la aplicación:**
+    ```bash
+    npm run dev
+    ```
+
+## Despliegue
+
+El proyecto está configurado (ver `netlify.toml` y `vite.config.ts`) para desplegarse fácilmente en plataformas como Netlify. Asegúrate de configurar la variable de entorno `API_KEY` en el panel de configuración de tu proveedor de hosting.
+
+## Autoría y Desarrollo
+
+*   **Concepto y Desarrollo:** Dr. Leonardo Jurado - Residente de Medicina Física y Rehabilitación, Universidad Nacional de Colombia.
+*   **Plataforma:** Desarrollada con asistencia de Inteligencia Artificial bajo la supervisión de Leo J Escobar.
+*   **Propósito:** Académico y de apoyo clínico. Sin ánimo de lucro.
+
+---
+© 2024 Polineuropathy-Assistant Electrodiagnóstico PMR Specialist Platform

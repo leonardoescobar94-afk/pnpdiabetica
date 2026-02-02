@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { PatientData, NerveReading, AnalysisResult } from "../types";
 
@@ -7,25 +6,50 @@ export const getClinicalSummary = async (
   readings: NerveReading[],
   analysis: AnalysisResult
 ): Promise<string> => {
-  // Always use a named parameter with process.env.API_KEY directly
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  // Derive abnormalities from analysis details since AnalysisResult doesn't have an abnormalities property
+  // Derive abnormalities from analysis details
   const abnormalities = [
     ...analysis.score2.details,
     ...analysis.score4.details
   ].filter(d => d.points > 0).map(d => d.nerve);
 
-  const prompt = `
-    Como experto en medicina física y rehabilitación, analiza los siguientes resultados de neuroconducción:
-    Paciente: Edad ${patient.age}, Altura ${patient.height}cm.
-    Resultados del Estudio:
-    ${readings.map(r => `- ${r.nerveName} (${r.type}): Latencia ${r.distalLatency}ms, Amplitud ${r.amplitude}, Velocidad ${r.velocity}m/s`).join('\n')}
+  // Formatear los hallazgos según el tipo de nervio para mayor precisión clínica
+  const findingsList = readings.map(r => {
+    const isSural = r.nerveName.includes('Sural');
+    let details = '';
     
-    Clasificación: ${analysis.severityClass}.
-    Hallazgos anormales detectados: ${abnormalities.length > 0 ? abnormalities.join(', ') : 'Ninguno'}.
+    if (isSural) {
+      details = `Latencia Pico: ${r.peakLatency || 'NR'} ms, Amplitud: ${r.amplitude} uV`;
+    } else {
+      details = `Velocidad: ${r.velocity || 'NR'} m/s, Amplitud: ${r.amplitude} mV`;
+    }
+    
+    return `- ${r.nerveName}: ${details}`;
+  }).join('\n');
 
-    Por favor, proporciona un breve resumen clínico (máximo 2 párrafos) interpretando el patrón (axonal, desmielinizante o mixto) y sugerencias para el seguimiento clínico. Habla en tono profesional médico.
+  const prompt = `
+    Actúa como un médico especialista experto en Medicina Física y Rehabilitación y Neurofisiología Clínica.
+    Analiza los siguientes resultados de neuroconducción para un paciente con sospecha o antecedentes de diabetes.
+
+    DATOS DEL PACIENTE:
+    Edad: ${patient.age} años
+    Altura: ${patient.height} cm
+
+    HALLAZGOS ELECTROFISIOLÓGICOS:
+    ${findingsList}
+    
+    RESULTADO DEL ANÁLISIS AUTOMÁTICO (Escala de Davies):
+    Clasificación: ${analysis.severityClass}
+    Nervios con hallazgos anormales (según percentiles): ${abnormalities.length > 0 ? abnormalities.join(', ') : 'Ninguno'}.
+
+    TAREA:
+    Genera un concepto clínico conciso y profesional (máximo 150 palabras) que incluya:
+    1. Interpretación del patrón (ej. ¿Predominio axonal, desmielinizante, mixto? ¿Sensitivo puro o sensitivo-motor?).
+    2. Correlación con la clasificación de severidad obtenida.
+    3. Una breve recomendación de conducta o seguimiento clínico.
+
+    Usa terminología médica precisa. No incluyas saludos ni explicaciones obvias, ve directo al concepto.
   `;
 
   try {
@@ -33,10 +57,9 @@ export const getClinicalSummary = async (
       model: 'gemini-3-flash-preview',
       contents: prompt,
     });
-    // Use the .text property directly (do not call it as a method)
     return response.text || "No se pudo generar el resumen clínico.";
   } catch (error) {
     console.error("Error calling Gemini:", error);
-    return "Error al conectar con el servicio de análisis inteligente.";
+    return "Error al conectar con el servicio de análisis inteligente. Verifique su conexión o API Key.";
   }
 };

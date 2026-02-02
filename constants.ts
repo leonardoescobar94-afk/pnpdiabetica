@@ -32,7 +32,7 @@ export const DEFAULT_REFERENCES: ReferenceValue[] = [
 
 export const TEXTS = {
   es: {
-    title: "Polineuropathy-Assistant",
+    title: "Polineuropathy-Assistant Electrodiagnóstico PMR",
     subtitle: "Clasificación electrofisiológica de la severidad de la polineuropatía diabética.",
     professionalTool: "HERRAMIENTA PROFESIONAL",
     basedOn: "Basado en Percentiles Normalizados (Davies et al.)",
@@ -74,9 +74,9 @@ export const TEXTS = {
     development: "Desarrollo",
     developmentText1: "Esta herramienta se desarrolló como parte del contenido académico motivado y promovido durante la rotación de profundización en electrodiagnóstico y neurofisiología con el Dr. Fernando Ortiz.",
     developmentText2: "Desarrollada por Leonardo Jurado - Residente Medicina Física y Rehabilitación. Universidad Nacional de Colombia.",
-    developmentText3: "Esta herramienta se desarrollo usando inteligencia artificial para su programacion.",
+    developmentText3: "Esta herramienta se desarrolló usando inteligencia artificial para su programación.",
     developmentText4: "Aplicación sin ánimo de lucro. Ideada exclusivamente con fines académicos y de apoyo a la práctica de los médicos especialistas en medicina física y rehabilitación y neurología que realizan estudios de electrodiagnóstico.",
-    footer: "© 2024 Polineuropathy-Assistant PM&R Specialist Platform",
+    footer: "© 2024 Polineuropathy-Assistant Electrodiagnóstico PMR Specialist Platform by Leo J Escobar",
     normal: "NORMAL",
     abnormal: "ANORMAL",
     mild: "LEVE",
@@ -86,10 +86,10 @@ export const TEXTS = {
     points: "PTS",
     // Interpretation strings updated to specific phrases
     s2NormalTitle: "NORMAL",
-    s2NormalBody: "NEUROCONDUCCIONES NORMALES, NEGATIVO PARA POLINEUROPATIA",
-    s2SensoryBody: "NEUROCONDUCCIONES ANORMALES COMPATIBLES CON POLINEUROPATIA DIABETICA SENSITIVA",
-    s2SensorimotorBody: "NEUROCONDUCCIONES ANORMALES COMPATIBLES CON POLINEUROPATIA DIABETICA SENSITIVO MOTORA",
-    s2AbnormalGeneric: "NEUROCONDUCCIONES ANORMALES (Inespecífico)",
+    s2NormalBody: "NEUROCONDUCCIONES NORMALES, NEGATIVO PARA POLINEUROPATÍA",
+    s2SensoryBody: "NEUROCONDUCCIONES ANORMALES COMPATIBLES CON POLINEUROPATÍA DIABÉTICA SENSITIVA",
+    s2SensorimotorBody: "NEUROCONDUCCIONES ANORMALES COMPATIBLES CON POLINEUROPATÍA DIABÉTICA SENSITIVO MOTORA",
+    s2AbnormalGeneric: "NEUROCONDUCCIONES ANORMALES (Patrón No Específico)",
     nStageLabel: "Estadiaje N",
     n0Desc: "Sin anomalías en las neuroconducciones",
     n1Desc: "Neuroconducciones anormales sin signos de neuropatía",
@@ -97,7 +97,7 @@ export const TEXTS = {
     n3Desc: "Neuroconducciones anormales y signos de afectación del muslo"
   },
   en: {
-    title: "Polineuropathy-Assistant",
+    title: "Polineuropathy-Assistant Electrodiagnostic PMR",
     subtitle: "Electrophysiological classification of diabetic polyneuropathy severity.",
     professionalTool: "PROFESSIONAL TOOL",
     basedOn: "Based on Normalized Percentiles (Davies et al.)",
@@ -141,7 +141,7 @@ export const TEXTS = {
     developmentText2: "Developed by Leonardo Jurado - Physical Medicine and Rehabilitation Resident. National University of Colombia.",
     developmentText3: "This tool was developed using artificial intelligence for its programming.",
     developmentText4: "Non-profit application. Designed exclusively for academic purposes and to support the practice of physical medicine and rehabilitation specialists and neurologists performing electrodiagnostic studies.",
-    footer: "© 2024 Polineuropathy-Assistant PM&R Specialist Platform",
+    footer: "© 2024 Polineuropathy-Assistant Electrodiagnostic PMR Specialist Platform by Leo J Escobar",
     normal: "NORMAL",
     abnormal: "ABNORMAL",
     mild: "MILD",
@@ -154,7 +154,7 @@ export const TEXTS = {
     s2NormalBody: "NORMAL NERVE CONDUCTIONS, NEGATIVE FOR POLYNEUROPATHY",
     s2SensoryBody: "ABNORMAL NERVE CONDUCTIONS COMPATIBLE WITH SENSORY DIABETIC POLYNEUROPATHY",
     s2SensorimotorBody: "ABNORMAL NERVE CONDUCTIONS COMPATIBLE WITH SENSORIMOTOR DIABETIC POLYNEUROPATHY",
-    s2AbnormalGeneric: "ABNORMAL NERVE CONDUCTIONS (Nonspecific)",
+    s2AbnormalGeneric: "ABNORMAL NERVE CONDUCTIONS (Non-specific Pattern)",
     nStageLabel: "N Staging",
     n0Desc: "No anomalies in nerve conductions",
     n1Desc: "Abnormal nerve conductions without signs of neuropathy",
