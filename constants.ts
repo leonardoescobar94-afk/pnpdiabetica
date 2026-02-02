@@ -1,4 +1,3 @@
-
 import { ReferenceValue, NerveType } from './types';
 
 // Valores base. Los límites reales se calculan dinámicamente en analysis.ts
@@ -32,7 +31,7 @@ export const DEFAULT_REFERENCES: ReferenceValue[] = [
 
 export const TEXTS = {
   es: {
-    title: "Polineuropathy-Assistant Electrodiagnóstico PMR",
+    title: "Polineuropathy-Assistant PMR",
     subtitle: "Clasificación electrofisiológica de la severidad de la polineuropatía diabética.",
     professionalTool: "HERRAMIENTA PROFESIONAL",
     basedOn: "Basado en Percentiles Normalizados (Davies et al.)",
@@ -97,7 +96,7 @@ export const TEXTS = {
     n3Desc: "Neuroconducciones anormales y signos de afectación del muslo"
   },
   en: {
-    title: "Polineuropathy-Assistant Electrodiagnostic PMR",
+    title: "Polineuropathy-Assistant PMR",
     subtitle: "Electrophysiological classification of diabetic polyneuropathy severity.",
     professionalTool: "PROFESSIONAL TOOL",
     basedOn: "Based on Normalized Percentiles (Davies et al.)",
