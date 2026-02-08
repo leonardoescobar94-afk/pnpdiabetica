@@ -1,8 +1,6 @@
 
 import { PatientData, NerveReading, AnalysisResult } from "../types";
 
-// Nota: Ya no importamos GoogleGenAI aquí porque el frontend no debe usar el SDK directamente.
-
 export const getClinicalSummary = async (
   patient: PatientData,
   readings: NerveReading[],
@@ -77,7 +75,6 @@ export const getClinicalSummary = async (
     `;
 
   try {
-    // Llamada a la Netlify Function (Backend for Frontend)
     const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: {
@@ -93,12 +90,14 @@ export const getClinicalSummary = async (
     });
 
     if (!response.ok) {
-      // Manejo específico de errores
       if (response.status === 404) {
-        throw new Error("Function not found. Si estás en local, usa 'netlify dev'.");
+        throw new Error("Function not found (404).");
       }
+      
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Server error: ${response.status}`);
+      // Aquí extraemos el detalle real del error del backend
+      const serverDetails = errorData.details || errorData.error || response.statusText;
+      throw new Error(serverDetails);
     }
 
     const data = await response.json();
@@ -107,11 +106,7 @@ export const getClinicalSummary = async (
   } catch (error: any) {
     console.error("AI Service Error:", error);
     
-    // Mensaje amigable para el usuario final
-    const msg = lang === 'es'
-      ? `Error: ${error.message.includes('Function not found') ? 'Función no encontrada (404).' : 'Fallo en servicio de IA.'}`
-      : `Error: ${error.message.includes('Function not found') ? 'Function not found (404).' : 'AI Service Failed.'}`;
-
-    return `${msg} ${lang === 'es' ? 'Verifique conexión.' : 'Check connection.'}`;
+    // Mostramos el mensaje exacto del servidor en la UI para facilitar el diagnóstico
+    return `Error AI: ${error.message}`;
   }
 };
