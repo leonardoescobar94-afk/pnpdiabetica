@@ -1,5 +1,5 @@
 {
-  "name": "Copy of Polineuropathy-Assistant Electrodiagnóstico PMR for netlify",
-  "description": "Una aplicación avanzada para médicos rehabilitadores para el análisis de estudios de neuroconducción, comparación con valores de referencia y clasificación de neuropatía diabética según la escala de Davies.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "name": "Polineuropathy-Assistant DSPN",
+  "description": "Clasificacion de severidad electrodiagnostica de Diabetic sensorimotor polyneuropathy (DSPN)"
 }
