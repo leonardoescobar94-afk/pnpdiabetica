@@ -1,6 +1,7 @@
 
-import { GoogleGenAI } from "@google/genai";
 import { PatientData, NerveReading, AnalysisResult } from "../types";
+
+// Nota: Ya no importamos GoogleGenAI aquí porque el frontend no debe usar el SDK directamente.
 
 export const getClinicalSummary = async (
   patient: PatientData,
@@ -8,7 +9,6 @@ export const getClinicalSummary = async (
   analysis: AnalysisResult,
   lang: 'es' | 'en' = 'es'
 ): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const abnormalities = [
     ...analysis.score2.details,
@@ -77,20 +77,32 @@ export const getClinicalSummary = async (
     `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
+    // Llamada a la Netlify Function (Backend for Frontend)
+    const response = await fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt,
         systemInstruction,
-        temperature: 0.2, // Baja temperatura para mayor precisión médica
-      }
+        config: {
+          temperature: 0.2
+        }
+      })
     });
-    
-    return response.text || (lang === 'es' ? "No se pudo generar el resumen." : "Summary could not be generated.");
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.text || (lang === 'es' ? "No se pudo generar el resumen." : "Summary could not be generated.");
+
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("AI Service Error:", error);
     return lang === 'es' 
-      ? "Error al conectar con el servicio de análisis inteligente." 
-      : "Error connecting to the smart analysis service.";
+      ? "Error al conectar con el servicio de análisis inteligente. Verifique su conexión o configuración." 
+      : "Error connecting to the smart analysis service. Check connection or configuration.";
   }
 };
