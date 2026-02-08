@@ -2,7 +2,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const handler = async (event: any) => {
-  // Manejo de CORS (Pre-flight requests)
+  // 1. Manejo de CORS (Permitir llamadas desde el frontend)
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 204,
@@ -14,7 +14,7 @@ export const handler = async (event: any) => {
     };
   }
 
-  // Validar método POST (En Netlify V1 se usa httpMethod, no method)
+  // 2. Validar método
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -23,29 +23,42 @@ export const handler = async (event: any) => {
   }
 
   try {
+    // 3. Validar API Key
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-    
     if (!apiKey) {
-      console.error("API Key no configurada en el entorno del servidor.");
+      console.error("CRITICAL: API Key is missing in Netlify Environment Variables.");
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "Server configuration error: API Key missing" })
+        body: JSON.stringify({ error: "Server Error: API Key not configured." })
       };
     }
 
-    // Parsear el cuerpo del mensaje (en Netlify V1 body es un string)
-    if (!event.body) {
+    // 4. Parsear el cuerpo de la solicitud de forma segura
+    let bodyData;
+    try {
+      // A veces event.body ya es un objeto si se usa cierto middleware, o string si es raw
+      bodyData = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+    } catch (e) {
+      console.error("Error parsing request body:", e);
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Invalid JSON body" })
+      };
+    }
+
+    if (!bodyData || !bodyData.prompt) {
        return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Missing request body" })
+        body: JSON.stringify({ error: "Missing 'prompt' in request body" })
       };
     }
 
-    const { prompt, systemInstruction, config } = JSON.parse(event.body);
+    const { prompt, systemInstruction, config } = bodyData;
 
+    // 5. Llamada a Google Gemini
     const ai = new GoogleGenAI({ apiKey });
-
+    
     // Usamos el modelo flash por defecto
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -56,6 +69,7 @@ export const handler = async (event: any) => {
       }
     });
 
+    // 6. Retorno exitoso
     return {
       statusCode: 200,
       headers: {
@@ -66,11 +80,14 @@ export const handler = async (event: any) => {
     };
 
   } catch (error: any) {
-    console.error("Error en Netlify Function:", error);
+    console.error("FULL ERROR DETAILS:", error);
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Error processing AI request", details: error.message })
+      body: JSON.stringify({ 
+        error: "AI Service Error", 
+        details: error.message || "Unknown error"
+      })
     };
   }
 };

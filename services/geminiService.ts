@@ -93,16 +93,25 @@ export const getClinicalSummary = async (
     });
 
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      // Manejo específico de errores
+      if (response.status === 404) {
+        throw new Error("Function not found. Si estás en local, usa 'netlify dev'.");
+      }
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server error: ${response.status}`);
     }
 
     const data = await response.json();
     return data.text || (lang === 'es' ? "No se pudo generar el resumen." : "Summary could not be generated.");
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Service Error:", error);
-    return lang === 'es' 
-      ? "Error al conectar con el servicio de análisis inteligente. Verifique su conexión o configuración." 
-      : "Error connecting to the smart analysis service. Check connection or configuration.";
+    
+    // Mensaje amigable para el usuario final
+    const msg = lang === 'es'
+      ? `Error: ${error.message.includes('Function not found') ? 'Función no encontrada (404).' : 'Fallo en servicio de IA.'}`
+      : `Error: ${error.message.includes('Function not found') ? 'Function not found (404).' : 'AI Service Failed.'}`;
+
+    return `${msg} ${lang === 'es' ? 'Verifique conexión.' : 'Check connection.'}`;
   }
 };
