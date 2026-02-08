@@ -1,61 +1,81 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-export const handler = async (event: Request) => {
-  // Manejo básico de CORS para permitir llamadas desde el propio dominio
-  if (event.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
-    });
+export const handler = async (event: any) => {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+
+  // Preflight CORS
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 204,
+      headers: corsHeaders,
+      body: "",
+    };
   }
 
-  if (event.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
+  // Solo POST
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      headers: corsHeaders,
+      body: "Method Not Allowed",
+    };
   }
 
   try {
     const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-    
     if (!apiKey) {
       console.error("API Key no configurada en el entorno del servidor.");
-      return new Response(JSON.stringify({ error: "Server configuration error" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
-      });
+      return {
+        statusCode: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Server configuration error (missing API key)" }),
+      };
     }
 
-    const { prompt, systemInstruction, config } = await event.json();
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Missing request body" }),
+      };
+    }
+
+    const { prompt, systemInstruction, config } = JSON.parse(event.body);
+
+    if (!prompt || typeof prompt !== "string") {
+      return {
+        statusCode: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Invalid prompt" }),
+      };
+    }
 
     const ai = new GoogleGenAI({ apiKey });
 
-    // Usamos el modelo flash por defecto, o el que se especifique
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: "gemini-1.5-flash", // ✅ modelo estable
       contents: prompt,
       config: {
-        systemInstruction: systemInstruction,
-        temperature: config?.temperature || 0.2,
-      }
+        systemInstruction: systemInstruction ?? "",
+        temperature: config?.temperature ?? 0.2,
+      },
     });
 
-    return new Response(JSON.stringify({ text: response.text }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*" 
-      }
-    });
-
+    return {
+      statusCode: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({ text: response.text }),
+    };
   } catch (error) {
     console.error("Error en Netlify Function:", error);
-    return new Response(JSON.stringify({ error: "Error processing AI request" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+    return {
+      statusCode: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Error processing AI request" }),
+    };
   }
 };
