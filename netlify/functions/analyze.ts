@@ -35,7 +35,7 @@ export const handler = async (event: Request) => {
 
     // Usamos el modelo flash por defecto, o el que se especifique
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
