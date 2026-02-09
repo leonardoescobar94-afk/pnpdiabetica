@@ -9,3 +9,10 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
+
+# Redirect for Unified API Route
+[[redirects]]
+  from = "/api/analyze"
+  to = "/.netlify/functions/analyze"
+  status = 200
+  force = true

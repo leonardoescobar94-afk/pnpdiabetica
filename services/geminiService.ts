@@ -75,7 +75,8 @@ export const getClinicalSummary = async (
     `;
 
   try {
-    const response = await fetch('/.netlify/functions/analyze', {
+    // UNIFIED ROUTE: Works for Vercel (native) and Netlify (via redirect)
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,11 +92,10 @@ export const getClinicalSummary = async (
 
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error("Function not found (404).");
+        throw new Error("Function not found (404). Check API configuration.");
       }
       
       const errorData = await response.json().catch(() => ({}));
-      // Aquí extraemos el detalle real del error del backend
       const serverDetails = errorData.details || errorData.error || response.statusText;
       throw new Error(serverDetails);
     }
@@ -105,8 +105,6 @@ export const getClinicalSummary = async (
 
   } catch (error: any) {
     console.error("AI Service Error:", error);
-    
-    // Mostramos el mensaje exacto del servidor en la UI para facilitar el diagnóstico
     return `Error AI: ${error.message}`;
   }
 };
